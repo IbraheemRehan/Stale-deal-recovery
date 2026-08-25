@@ -1,51 +1,35 @@
 import React, { useState } from 'react';
-import { 
-  Users, 
-  Plus, 
-  Edit3, 
-  Trash2, 
-  CheckCircle, 
-  AlertTriangle, 
-  DollarSign, 
-  Mail, 
-  Phone,
-  ShieldCheck
+import {
+  Plus,
+  Edit3,
+  Trash2,
+  AlertTriangle,
+  X
 } from 'lucide-react';
 
-export default function RepWorkloadTable({ 
-  reps = [], 
-  onAddRep, 
-  onUpdateRep, 
+export default function RepWorkloadTable({
+  reps = [],
+  onAddRep,
+  onUpdateRep,
   onDeleteRep,
-  addToast 
+  addToast
 }) {
   const [showModal, setShowModal] = useState(false);
   const [editingRep, setEditingRep] = useState(null);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    role: 'Account Executive',
-    phone: '',
-    active: true
+    name: '', email: '', role: 'Account Executive', phone: '', active: true
   });
 
-  const formatCurrency = (val) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val || 0);
-  };
+  const fmt = (val) =>
+    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val || 0);
 
-  const handleOpenAdd = () => {
+  const openAdd = () => {
     setEditingRep(null);
-    setFormData({
-      name: '',
-      email: '',
-      role: 'Account Executive',
-      phone: '',
-      active: true
-    });
+    setFormData({ name: '', email: '', role: 'Account Executive', phone: '', active: true });
     setShowModal(true);
   };
 
-  const handleOpenEdit = (rep) => {
+  const openEdit = (rep) => {
     setEditingRep(rep);
     setFormData({
       name: rep.name,
@@ -60,247 +44,228 @@ export default function RepWorkloadTable({
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.email) {
-      if (addToast) addToast({ type: 'error', title: 'Validation Error', message: 'Name and Email are required.' });
+      addToast?.({ type: 'error', title: 'Validation', message: 'Name and Email are required.' });
       return;
     }
-
     try {
       if (editingRep) {
         await onUpdateRep(editingRep.id, formData);
-        if (addToast) addToast({ type: 'success', title: 'Rep Updated', message: `${formData.name} updated successfully.` });
+        addToast?.({ type: 'success', title: 'Updated', message: `${formData.name} updated.` });
       } else {
         await onAddRep(formData);
-        if (addToast) addToast({ type: 'success', title: 'Rep Added', message: `${formData.name} added to sales team.` });
+        addToast?.({ type: 'success', title: 'Added', message: `${formData.name} added to team.` });
       }
       setShowModal(false);
     } catch (err) {
-      if (addToast) addToast({ type: 'error', title: 'Action Failed', message: err.message });
+      addToast?.({ type: 'error', title: 'Failed', message: err.message });
     }
   };
 
   return (
-    <div className="ent-card" style={{ padding: '20px' }}>
+    <div className="ent-card slide-up" style={{ overflow: 'hidden' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#0f172a' }}>
-              👥 Sales Team Workload &amp; Stale Recovery Rate
-            </h2>
-            <span className="badge badge-active">
-              {reps.length} Reps On Roster
-            </span>
+      <div style={{ padding: '22px 24px 0' }}>
+        <div className="section-header">
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <h2 className="section-header__title">👥 Sales Team & Recovery Metrics</h2>
+              <span className="badge badge-accent badge-lg">{reps.length} Reps</span>
+            </div>
+            <p className="section-header__subtitle">
+              Monitor deal distribution, stale pipeline exposure, and individual rep recovery performance.
+            </p>
           </div>
-          <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
-            Monitor deal distribution, untouched pipelines, and individual rep recovery turnaround metrics.
-          </p>
+          <button onClick={openAdd} className="btn btn-primary btn-sm">
+            <Plus size={14} />
+            <span>Add Rep</span>
+          </button>
         </div>
-
-        <button onClick={handleOpenAdd} className="btn btn-primary btn-sm">
-          <Plus size={12} />
-          <span>Add Sales Rep</span>
-        </button>
       </div>
 
       {/* Table */}
-      <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.8rem' }}>
-          <thead>
-            <tr style={{ borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)', fontWeight: 600 }}>
-              <th style={{ padding: '10px 12px' }}>Representative</th>
-              <th style={{ padding: '10px 12px' }}>Role / Status</th>
-              <th style={{ padding: '10px 12px' }}>Open Deals</th>
-              <th style={{ padding: '10px 12px' }}>Stale Pipeline</th>
-              <th style={{ padding: '10px 12px' }}>At-Risk Value</th>
-              <th style={{ padding: '10px 12px' }}>Recovery Rate</th>
-              <th style={{ padding: '10px 12px', textAlign: 'right' }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {reps.map(rep => (
-              <tr 
-                key={rep.id} 
-                style={{ borderBottom: '1px solid var(--border-subtle)', transition: 'background 0.15s ease' }}
-                onMouseEnter={(e) => e.currentTarget.style.background = '#f8fafc'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-              >
-                {/* Rep Name & Email */}
-                <td style={{ padding: '12px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div style={{
-                      width: '28px',
-                      height: '28px',
-                      borderRadius: '50%',
-                      background: '#eff6ff',
-                      color: '#2563eb',
-                      fontWeight: 800,
-                      fontSize: '0.74rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      border: '1px solid #bfdbfe'
-                    }}>
-                      {rep.avatar || (rep.name || 'SR').slice(0, 2).toUpperCase()}
-                    </div>
-                    <div>
-                      <div style={{ fontWeight: 700, color: '#0f172a' }}>{rep.name}</div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{rep.email}</div>
-                    </div>
-                  </div>
-                </td>
-
-                {/* Role / Status */}
-                <td style={{ padding: '12px' }}>
-                  <div style={{ fontWeight: 600, color: '#475569', fontSize: '0.76rem' }}>{rep.role || 'AE'}</div>
-                  <span className={`badge ${rep.active !== false ? 'badge-active' : 'badge-neutral'}`} style={{ fontSize: '0.64rem', marginTop: '2px' }}>
-                    {rep.active !== false ? 'Active' : 'Out of Office'}
-                  </span>
-                </td>
-
-                {/* Open Deals */}
-                <td style={{ padding: '12px', fontWeight: 600 }}>
-                  {rep.openDealsCount || 0} Deals
-                </td>
-
-                {/* Stale Deals */}
-                <td style={{ padding: '12px' }}>
-                  {(rep.staleDealsCount || 0) > 0 ? (
-                    <span className="badge badge-stale" style={{ fontWeight: 800 }}>
-                      <AlertTriangle size={10} />
-                      {rep.staleDealsCount} Stale
-                    </span>
-                  ) : (
-                    <span className="badge badge-active">
-                      0 Stale
-                    </span>
-                  )}
-                </td>
-
-                {/* At-Risk Value */}
-                <td style={{ padding: '12px', fontWeight: 700, color: (rep.atRiskValue || 0) > 0 ? 'var(--status-stale)' : 'var(--text-muted)' }}>
-                  {formatCurrency(rep.atRiskValue || 0)}
-                </td>
-
-                {/* Recovery Rate */}
-                <td style={{ padding: '12px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <div style={{ width: '60px', height: '6px', background: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
-                      <div style={{
-                        width: `${rep.recoveryWinRate !== undefined ? rep.recoveryWinRate : 100}%`,
-                        height: '100%',
-                        background: (rep.recoveryWinRate || 100) >= 80 ? '#059669' : '#d97706'
-                      }} />
-                    </div>
-                    <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#0f172a' }}>
-                      {rep.recoveryWinRate !== undefined ? rep.recoveryWinRate : 100}%
-                    </span>
-                  </div>
-                </td>
-
-                {/* Actions */}
-                <td style={{ padding: '12px', textAlign: 'right' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px' }}>
-                    <button 
-                      onClick={() => handleOpenEdit(rep)}
-                      className="btn btn-secondary btn-sm"
-                      style={{ padding: '4px 8px' }}
-                      title="Edit Representative"
-                    >
-                      <Edit3 size={12} />
-                    </button>
-
-                    <button 
-                      onClick={() => onDeleteRep(rep.id)}
-                      className="btn btn-secondary btn-sm"
-                      style={{ padding: '4px 8px', color: '#dc2626' }}
-                      title="Delete Representative"
-                    >
-                      <Trash2 size={12} />
-                    </button>
-                  </div>
-                </td>
+      <div style={{ padding: '0 24px 24px' }}>
+        <div style={{
+          overflowX: 'auto',
+          borderRadius: 'var(--radius-sm)',
+          border: '1px solid var(--border-default)'
+        }}>
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Representative</th>
+                <th>Role</th>
+                <th>Open Deals</th>
+                <th>Stale</th>
+                <th>At-Risk Value</th>
+                <th>Recovery Rate</th>
+                <th style={{ textAlign: 'right' }}>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {reps.map(rep => {
+                const rate = rep.recoveryWinRate !== undefined ? rep.recoveryWinRate : 100;
+                const rateClass = rate >= 80 ? 'success' : rate >= 50 ? 'warning' : 'danger';
+
+                return (
+                  <tr key={rep.id}>
+                    {/* Name */}
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div className="avatar avatar--indigo">
+                          {rep.avatar || (rep.name || 'SR').slice(0, 2).toUpperCase()}
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{rep.name}</div>
+                          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{rep.email}</div>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* Role */}
+                    <td>
+                      <div style={{ fontWeight: 600, color: 'var(--text-secondary)', fontSize: '0.8rem', marginBottom: '3px' }}>
+                        {rep.role || 'AE'}
+                      </div>
+                      <span className={`badge ${rep.active !== false ? 'badge-active' : 'badge-neutral'}`} style={{ fontSize: '0.66rem' }}>
+                        {rep.active !== false ? 'Active' : 'Out of Office'}
+                      </span>
+                    </td>
+
+                    {/* Open Deals */}
+                    <td>
+                      <span style={{ fontWeight: 700, fontSize: '0.88rem' }}>
+                        {rep.openDealsCount || 0}
+                      </span>
+                      <span style={{ fontSize: '0.76rem', color: 'var(--text-muted)', marginLeft: '4px' }}>deals</span>
+                    </td>
+
+                    {/* Stale */}
+                    <td>
+                      {(rep.staleDealsCount || 0) > 0 ? (
+                        <span className="badge badge-stale" style={{ fontWeight: 800 }}>
+                          <AlertTriangle size={10} />
+                          {rep.staleDealsCount} Stale
+                        </span>
+                      ) : (
+                        <span className="badge badge-active">0 Stale</span>
+                      )}
+                    </td>
+
+                    {/* At-Risk */}
+                    <td>
+                      <span style={{
+                        fontWeight: 800,
+                        color: (rep.atRiskValue || 0) > 0 ? 'var(--danger)' : 'var(--text-muted)',
+                        fontSize: '0.88rem'
+                      }}>
+                        {fmt(rep.atRiskValue || 0)}
+                      </span>
+                    </td>
+
+                    {/* Recovery Rate */}
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div className="progress-bar">
+                          <div
+                            className={`progress-bar__fill progress-bar__fill--${rateClass}`}
+                            style={{ width: `${rate}%` }}
+                          />
+                        </div>
+                        <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                          {rate}%
+                        </span>
+                      </div>
+                    </td>
+
+                    {/* Actions */}
+                    <td style={{ textAlign: 'right' }}>
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
+                        <button onClick={() => openEdit(rep)} className="btn btn-ghost btn-xs" title="Edit">
+                          <Edit3 size={13} />
+                        </button>
+                        <button
+                          onClick={() => onDeleteRep(rep.id)}
+                          className="btn btn-ghost btn-xs"
+                          style={{ color: 'var(--danger)' }}
+                          title="Delete"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* Add / Edit Rep Modal */}
+      {/* Add/Edit Modal */}
       {showModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(15, 23, 42, 0.45)',
-          backdropFilter: 'blur(3px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 9999,
-          padding: '20px'
-        }}>
-          <div className="ent-card" style={{ maxWidth: '440px', width: '100%', padding: '24px', background: '#ffffff', boxShadow: 'var(--shadow-lg)' }}>
-            <h3 style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a', marginBottom: '16px' }}>
-              {editingRep ? 'Edit Sales Representative' : 'Add Sales Representative'}
-            </h3>
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal-panel" style={{ maxWidth: '460px' }} onClick={e => e.stopPropagation()}>
+            <div className="modal-panel__header">
+              <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                {editingRep ? 'Edit Representative' : 'Add Representative'}
+              </h3>
+              <button onClick={() => setShowModal(false)} className="btn btn-ghost btn-xs">
+                <X size={16} />
+              </button>
+            </div>
 
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.74rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                  Full Name *
-                </label>
-                <input 
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  placeholder="e.g. Elena Rostova"
-                  className="input-field"
-                  required
-                />
+            <form onSubmit={handleSubmit}>
+              <div className="modal-panel__body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div className="form-group">
+                  <label className="form-label">Full Name *</label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData(p => ({ ...p, name: e.target.value }))}
+                    placeholder="Elena Rostova"
+                    className="input-field"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Work Email *</label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData(p => ({ ...p, email: e.target.value }))}
+                    placeholder="rep@company.com"
+                    className="input-field"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Role Title</label>
+                  <input
+                    type="text"
+                    value={formData.role}
+                    onChange={(e) => setFormData(p => ({ ...p, role: e.target.value }))}
+                    placeholder="Enterprise Closer"
+                    className="input-field"
+                  />
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px' }}>
+                  <input
+                    type="checkbox"
+                    id="activeCheck"
+                    checked={formData.active}
+                    onChange={(e) => setFormData(p => ({ ...p, active: e.target.checked }))}
+                    style={{ accentColor: 'var(--accent)' }}
+                  />
+                  <label htmlFor="activeCheck" style={{ fontSize: '0.82rem', color: 'var(--text-primary)', cursor: 'pointer' }}>
+                    Active for deal assignments & follow-up tasks
+                  </label>
+                </div>
               </div>
 
-              <div>
-                <label style={{ display: 'block', fontSize: '0.74rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                  Work Email (Receives Stale Alerts) *
-                </label>
-                <input 
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                  placeholder="rep@company.com"
-                  className="input-field"
-                  required
-                />
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '0.74rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                  Role Title
-                </label>
-                <input 
-                  type="text"
-                  value={formData.role}
-                  onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value }))}
-                  placeholder="e.g. Enterprise Closer"
-                  className="input-field"
-                />
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
-                <input 
-                  type="checkbox"
-                  id="activeCheck"
-                  checked={formData.active}
-                  onChange={(e) => setFormData(prev => ({ ...prev, active: e.target.checked }))}
-                />
-                <label htmlFor="activeCheck" style={{ fontSize: '0.76rem', color: '#0f172a', cursor: 'pointer' }}>
-                  Active for Deal Assignments &amp; Follow-up Tasks
-                </label>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px', marginTop: '12px' }}>
+              <div className="modal-panel__footer">
                 <button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary btn-sm">
                   Cancel
                 </button>

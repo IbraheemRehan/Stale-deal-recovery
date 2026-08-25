@@ -1,102 +1,95 @@
 import React from 'react';
-import { DollarSign, AlertCircle, Clock, CheckCircle2, TrendingUp } from 'lucide-react';
+import { AlertCircle, DollarSign, Clock, CheckCircle2 } from 'lucide-react';
 
-export default function KPIHeader({ metrics = {} }) {
-  const formatCurrency = (val) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val || 0);
-  };
+export default function KPIHeader({ metrics = {}, staleDays = 7 }) {
+  const fmt = (val) =>
+    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val || 0);
 
-  const totalValue = metrics.totalPipelineValue || 0;
-  const atRiskValue = metrics.atRiskPipelineValue || 0;
-  const staleCount = metrics.staleDealsCount || 0;
-  const openCount = metrics.openDealsCount || 0;
-  const staleRate = metrics.staleRatePct || 0;
-  const pendingTasks = metrics.pendingTasksCount || 0;
-  const taskResolutionRate = metrics.taskResolutionRate !== undefined ? metrics.taskResolutionRate : 100;
-  const avgInactiveDays = metrics.avgInactiveDays || 0;
+  const totalValue     = metrics.totalPipelineValue || 0;
+  const atRiskValue    = metrics.atRiskPipelineValue || 0;
+  const staleCount     = metrics.staleDealsCount || 0;
+  const openCount      = metrics.openDealsCount || 0;
+  const staleRate      = metrics.staleRatePct || 0;
+  const pendingTasks   = metrics.pendingTasksCount || 0;
+  const taskResolution = metrics.taskResolutionRate !== undefined ? metrics.taskResolutionRate : 100;
+  const avgInactive    = metrics.avgInactiveDays || 0;
+
+  const cards = [
+    {
+      variant: 'danger',
+      label: 'At-Risk Pipeline',
+      value: fmt(atRiskValue),
+      valueDanger: true,
+      icon: AlertCircle,
+      badge: { text: `${staleRate}% of pipeline`, className: 'badge-stale' },
+      detail: `in ${staleCount} stale deal${staleCount !== 1 ? 's' : ''}`
+    },
+    {
+      variant: 'accent',
+      label: 'Total Pipeline',
+      value: fmt(totalValue),
+      icon: DollarSign,
+      badge: null,
+      detail: `${openCount} active open deal${openCount !== 1 ? 's' : ''}`
+    },
+    {
+      variant: 'warning',
+      label: 'Avg Inactivity',
+      value: `${avgInactive} Days`,
+      icon: Clock,
+      badge: { text: `Limit: ${staleDays} Days`, className: 'badge-warning' },
+      detail: `auto-flags on day ${staleDays}`
+    },
+    {
+      variant: 'success',
+      label: 'Recovery Tasks',
+      value: `${pendingTasks} Pending`,
+      icon: CheckCircle2,
+      badge: { text: `${taskResolution}% resolved`, className: 'badge-active' },
+      detail: 'assigned to owners'
+    }
+  ];
 
   return (
-    <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px' }}>
-      {/* 1. At-Risk Pipeline Value */}
-      <div className="ent-card" style={{ padding: '16px 18px', borderLeft: '4px solid var(--status-stale)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-          <span style={{ fontSize: '0.74rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-            At-Risk Pipeline
-          </span>
-          <div style={{ padding: '6px', background: 'var(--status-stale-subtle)', borderRadius: '6px' }}>
-            <AlertCircle size={16} color="var(--status-stale)" />
-          </div>
-        </div>
-        <div style={{ fontSize: '1.45rem', fontWeight: 800, color: 'var(--status-stale)', letterSpacing: '-0.02em' }}>
-          {formatCurrency(atRiskValue)}
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px', fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-          <span className="badge badge-stale" style={{ fontSize: '0.68rem', padding: '1px 5px' }}>
-            {staleRate}% of Pipeline
-          </span>
-          <span>in {staleCount} stale deals</span>
-        </div>
-      </div>
+    <section style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+      gap: '16px'
+    }}>
+      {cards.map((card) => {
+        const Icon = card.icon;
+        return (
+          <div
+            key={card.label}
+            className={`ent-card kpi-card kpi-card--${card.variant}`}
+          >
+            <div style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'space-between',
+              marginBottom: '12px'
+            }}>
+              <span className="kpi-card__label">{card.label}</span>
+              <div className={`kpi-card__icon-box kpi-card__icon-box--${card.variant}`}>
+                <Icon size={18} color={`var(--${card.variant === 'accent' ? 'accent' : card.variant})`} />
+              </div>
+            </div>
 
-      {/* 2. Total Open Pipeline */}
-      <div className="ent-card" style={{ padding: '16px 18px', borderLeft: '4px solid var(--accent-primary)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-          <span style={{ fontSize: '0.74rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-            Total Pipeline
-          </span>
-          <div style={{ padding: '6px', background: 'var(--accent-primary-subtle)', borderRadius: '6px' }}>
-            <DollarSign size={16} color="var(--accent-primary)" />
-          </div>
-        </div>
-        <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em' }}>
-          {formatCurrency(totalValue)}
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px', fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-          <span>{openCount} active negotiation deals</span>
-        </div>
-      </div>
+            <div className={`kpi-card__value ${card.valueDanger ? 'kpi-card__value--danger' : ''}`}>
+              {card.value}
+            </div>
 
-      {/* 3. Average Inactivity Period */}
-      <div className="ent-card" style={{ padding: '16px 18px', borderLeft: '4px solid var(--status-warning)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-          <span style={{ fontSize: '0.74rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-            Avg Inactivity
-          </span>
-          <div style={{ padding: '6px', background: 'var(--status-warning-subtle)', borderRadius: '6px' }}>
-            <Clock size={16} color="var(--status-warning)" />
+            <div className="kpi-card__detail">
+              {card.badge && (
+                <span className={`badge ${card.badge.className}`} style={{ fontSize: '0.68rem' }}>
+                  {card.badge.text}
+                </span>
+              )}
+              <span>{card.detail}</span>
+            </div>
           </div>
-        </div>
-        <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em' }}>
-          {avgInactiveDays} Days
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px', fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-          <span className="badge badge-warning" style={{ fontSize: '0.68rem', padding: '1px 5px' }}>
-            Limit: 7 Days
-          </span>
-          <span>auto-flags on day 7</span>
-        </div>
-      </div>
-
-      {/* 4. Auto-Generated Tasks Pending */}
-      <div className="ent-card" style={{ padding: '16px 18px', borderLeft: '4px solid var(--status-active)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-          <span style={{ fontSize: '0.74rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-            Recovery Tasks
-          </span>
-          <div style={{ padding: '6px', background: 'var(--status-active-subtle)', borderRadius: '6px' }}>
-            <CheckCircle2 size={16} color="var(--status-active)" />
-          </div>
-        </div>
-        <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em' }}>
-          {pendingTasks} Actionable
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px', fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-          <span className="badge badge-active" style={{ fontSize: '0.68rem', padding: '1px 5px' }}>
-            {taskResolutionRate}% Resolution
-          </span>
-          <span>assigned to owners</span>
-        </div>
-      </div>
+        );
+      })}
     </section>
   );
 }

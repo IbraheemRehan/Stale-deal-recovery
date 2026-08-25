@@ -14,6 +14,21 @@ async function handleResponse(res) {
 }
 
 export const api = {
+  // Settings
+  getSettings: async () => {
+    const res = await fetch(`${BASE_URL}/settings`);
+    return handleResponse(res);
+  },
+
+  updateSettings: async (settings) => {
+    const res = await fetch(`${BASE_URL}/settings`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(settings)
+    });
+    return handleResponse(res);
+  },
+
   // Analytics
   getDashboard: async () => {
     const res = await fetch(`${BASE_URL}/analytics/dashboard`);

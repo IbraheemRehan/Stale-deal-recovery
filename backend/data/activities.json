@@ -1,5 +1,14 @@
 [
   {
+    "id": "act_1787658662055_m7c",
+    "dealId": "deal_101",
+    "type": "RE_ENGAGEMENT_CALL",
+    "subject": "Sales Outreach Follow-up",
+    "notes": "Spoke directly with prospect. Deal re-activated.",
+    "repName": "Muhammad Ibraheem",
+    "timestamp": "2026-08-25T11:51:02.054Z"
+  },
+  {
     "id": "act_1787658025940_2gf",
     "dealId": "deal_102",
     "type": "TASK_COMPLETION",

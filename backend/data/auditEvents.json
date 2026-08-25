@@ -1,5 +1,17 @@
 [
   {
+    "id": "evt_1787658662057_opzq",
+    "eventType": "DEAL_RECOVERED",
+    "dealId": "deal_101",
+    "repId": "rep_101",
+    "details": {
+      "title": "Enterprise CRM Migration & AI Add-on",
+      "amount": 85000,
+      "recoveryAction": "RE_ENGAGEMENT_CALL"
+    },
+    "timestamp": "2026-08-25T11:51:02.058Z"
+  },
+  {
     "id": "evt_1787658084547_b15c",
     "eventType": "DEAL_CREATED",
     "dealId": "deal_084547",

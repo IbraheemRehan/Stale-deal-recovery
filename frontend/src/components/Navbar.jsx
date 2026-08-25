@@ -1,180 +1,184 @@
 import React from 'react';
-import { 
-  Flame, 
-  Layers, 
-  AlertTriangle, 
-  CheckSquare, 
-  Users, 
-  RefreshCw, 
-  Plus, 
+import {
+  Flame,
+  Layers,
+  AlertTriangle,
+  CheckSquare,
+  Users,
+  RefreshCw,
+  Plus,
   Trash2,
-  ShieldCheck
+  ShieldCheck,
+  Settings2
 } from 'lucide-react';
 
-export default function Navbar({ 
-  activeTab, 
-  setActiveTab, 
-  staleCount = 0, 
+export default function Navbar({
+  activeTab,
+  setActiveTab,
+  staleCount = 0,
   pendingTasksCount = 0,
   onRunScan,
   scanning,
   onOpenNewDealModal,
-  onClearData
+  onClearData,
+  staleDays,
+  onStaleDaysChange,
+  onStaleDaysApply
 }) {
   return (
-    <header className="ent-card" style={{ padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-      {/* Brand & System Status */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <div style={{
-          width: '36px',
-          height: '36px',
-          borderRadius: '8px',
-          background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: '0 2px 6px rgba(37, 99, 235, 0.25)'
-        }}>
-          <Flame size={20} color="#ffffff" />
-        </div>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontWeight: 800, fontSize: '1rem', color: '#0f172a', letterSpacing: '-0.02em' }}>
-              Stale Deal Recovery CRM
-            </span>
-            <span className="badge badge-active" style={{ fontSize: '0.68rem', padding: '2px 6px' }}>
-              <ShieldCheck size={11} />
-              7-Day Scanner Active
-            </span>
+    <header className="ent-card ent-card--elevated" style={{ padding: 0, overflow: 'hidden' }}>
+      {/* ── Top Bar ── */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '16px',
+        padding: '16px 24px'
+      }}>
+        {/* Brand */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: 'var(--radius-md)',
+            background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: 'var(--shadow-accent)'
+          }}>
+            <Flame size={22} color="#ffffff" />
           </div>
-          <p style={{ fontSize: '0.74rem', color: 'var(--text-muted)', margin: 0 }}>
-            Automated Inactivity Detection, Auto-Task Generation &amp; Re-engagement Engine
-          </p>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{
+                fontWeight: 900,
+                fontSize: '1.1rem',
+                color: 'var(--text-primary)',
+                letterSpacing: '-0.03em'
+              }}>
+                Stale Deal Recovery
+              </span>
+              <span className="badge badge-active badge-lg">
+                <ShieldCheck size={12} />
+                {staleDays}-Day Scanner Active
+              </span>
+            </div>
+            <p style={{
+              fontSize: '0.78rem',
+              color: 'var(--text-muted)',
+              marginTop: '2px',
+              letterSpacing: '-0.01em'
+            }}>
+              Automated Inactivity Detection • Auto-Task Engine • Re-engagement Console
+            </p>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button
+            onClick={onRunScan}
+            className="btn btn-secondary btn-sm"
+            disabled={scanning}
+            title="Force an immediate stale deal scan"
+          >
+            <RefreshCw size={14} className={scanning ? 'spin-animation' : ''} />
+            <span>{scanning ? 'Scanning…' : 'Scan Pipeline'}</span>
+          </button>
+
+          <button
+            onClick={onOpenNewDealModal}
+            className="btn btn-primary btn-sm"
+          >
+            <Plus size={14} />
+            <span>New Deal</span>
+          </button>
+
+          <button
+            onClick={onClearData}
+            className="btn btn-ghost btn-sm"
+            style={{ color: 'var(--text-muted)' }}
+            title="Reset pipeline and task logs"
+          >
+            <Trash2 size={14} />
+          </button>
         </div>
       </div>
 
-      {/* Navigation Tabs */}
-      <nav style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#f1f5f9', padding: '4px', borderRadius: '8px' }}>
-        <button
-          onClick={() => setActiveTab('kanban')}
-          className="btn"
-          style={{
-            padding: '6px 14px',
-            fontSize: '0.78rem',
-            background: activeTab === 'kanban' ? '#ffffff' : 'transparent',
-            color: activeTab === 'kanban' ? '#0f172a' : '#64748b',
-            boxShadow: activeTab === 'kanban' ? 'var(--shadow-sm)' : 'none',
-            border: 'none'
-          }}
-        >
-          <Layers size={14} />
-          <span>Pipeline Board</span>
-        </button>
+      {/* ── Bottom Navigation Bar ── */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '12px',
+        padding: '8px 24px 12px',
+        borderTop: '1px solid var(--border-subtle)'
+      }}>
+        {/* Tabs */}
+        <nav className="pill-tabs">
+          <button
+            onClick={() => setActiveTab('kanban')}
+            className={`pill-tab ${activeTab === 'kanban' ? 'pill-tab--active' : ''}`}
+          >
+            <Layers size={15} />
+            <span>Pipeline Board</span>
+          </button>
 
-        <button
-          onClick={() => setActiveTab('watchlist')}
-          className="btn"
-          style={{
-            padding: '6px 14px',
-            fontSize: '0.78rem',
-            background: activeTab === 'watchlist' ? '#ffffff' : 'transparent',
-            color: activeTab === 'watchlist' ? '#dc2626' : '#64748b',
-            boxShadow: activeTab === 'watchlist' ? 'var(--shadow-sm)' : 'none',
-            border: 'none',
-            fontWeight: activeTab === 'watchlist' ? 700 : 500
-          }}
-        >
-          <AlertTriangle size={14} />
-          <span>Stale Watchlist</span>
-          {staleCount > 0 && (
-            <span style={{
-              background: '#dc2626',
-              color: '#ffffff',
-              fontSize: '0.66rem',
-              fontWeight: 800,
-              padding: '1px 6px',
-              borderRadius: '10px',
-              marginLeft: '4px'
-            }}>
-              {staleCount}
-            </span>
-          )}
-        </button>
+          <button
+            onClick={() => setActiveTab('watchlist')}
+            className={`pill-tab ${activeTab === 'watchlist' ? 'pill-tab--active' : ''}`}
+            style={activeTab === 'watchlist' ? { color: 'var(--danger)' } : {}}
+          >
+            <AlertTriangle size={15} />
+            <span>Stale Watchlist</span>
+            {staleCount > 0 && (
+              <span className="pill-tab__badge pill-tab__badge--danger">{staleCount}</span>
+            )}
+          </button>
 
-        <button
-          onClick={() => setActiveTab('tasks')}
-          className="btn"
-          style={{
-            padding: '6px 14px',
-            fontSize: '0.78rem',
-            background: activeTab === 'tasks' ? '#ffffff' : 'transparent',
-            color: activeTab === 'tasks' ? '#0f172a' : '#64748b',
-            boxShadow: activeTab === 'tasks' ? 'var(--shadow-sm)' : 'none',
-            border: 'none'
-          }}
-        >
-          <CheckSquare size={14} />
-          <span>Auto-Tasks</span>
-          {pendingTasksCount > 0 && (
-            <span style={{
-              background: '#2563eb',
-              color: '#ffffff',
-              fontSize: '0.66rem',
-              fontWeight: 800,
-              padding: '1px 6px',
-              borderRadius: '10px',
-              marginLeft: '4px'
-            }}>
-              {pendingTasksCount}
-            </span>
-          )}
-        </button>
+          <button
+            onClick={() => setActiveTab('tasks')}
+            className={`pill-tab ${activeTab === 'tasks' ? 'pill-tab--active' : ''}`}
+          >
+            <CheckSquare size={15} />
+            <span>Auto-Tasks</span>
+            {pendingTasksCount > 0 && (
+              <span className="pill-tab__badge pill-tab__badge--accent">{pendingTasksCount}</span>
+            )}
+          </button>
 
-        <button
-          onClick={() => setActiveTab('team')}
-          className="btn"
-          style={{
-            padding: '6px 14px',
-            fontSize: '0.78rem',
-            background: activeTab === 'team' ? '#ffffff' : 'transparent',
-            color: activeTab === 'team' ? '#0f172a' : '#64748b',
-            boxShadow: activeTab === 'team' ? 'var(--shadow-sm)' : 'none',
-            border: 'none'
-          }}
-        >
-          <Users size={14} />
-          <span>Sales Reps</span>
-        </button>
-      </nav>
+          <button
+            onClick={() => setActiveTab('team')}
+            className={`pill-tab ${activeTab === 'team' ? 'pill-tab--active' : ''}`}
+          >
+            <Users size={15} />
+            <span>Sales Team</span>
+          </button>
+        </nav>
 
-      {/* Global Actions */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <button 
-          onClick={onRunScan} 
-          className="btn btn-secondary btn-sm"
-          disabled={scanning}
-          title="Force an immediate 7-day stale deal scan"
-        >
-          <RefreshCw size={13} className={scanning ? 'spin-animation' : ''} />
-          <span>{scanning ? 'Scanning...' : 'Scan Pipeline'}</span>
-        </button>
-
-        <button 
-          onClick={onOpenNewDealModal} 
-          className="btn btn-primary btn-sm"
-        >
-          <Plus size={13} />
-          <span>New Deal</span>
-        </button>
-
-        <button 
-          onClick={onClearData} 
-          className="btn btn-secondary btn-sm"
-          style={{ color: '#94a3b8' }}
-          title="Reset pipeline and task logs"
-        >
-          <Trash2 size={13} />
-        </button>
+        {/* Stale Threshold Config */}
+        <div className="config-panel">
+          <Settings2 size={15} color="var(--text-muted)" />
+          <span className="config-panel__label">Stale Threshold:</span>
+          <input
+            type="number"
+            min={1}
+            max={90}
+            value={staleDays}
+            onChange={(e) => onStaleDaysChange(parseInt(e.target.value) || 7)}
+            className="config-panel__input"
+          />
+          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600 }}>days</span>
+          <button
+            onClick={onStaleDaysApply}
+            className="btn btn-primary btn-xs"
+          >
+            Apply
+          </button>
+        </div>
       </div>
     </header>
   );

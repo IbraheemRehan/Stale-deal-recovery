@@ -13,10 +13,11 @@
     "title": "🚨 Re-engage Untouched Deal (9 Days Inactive)",
     "description": "Deal has been sitting untouched for 9 days in PROPOSAL stage. Reach out with executive ROI comparison or pricing check-in.",
     "priority": "HIGH",
-    "status": "PENDING",
+    "status": "COMPLETED",
     "dueDate": "2026-08-26T11:20:26.160Z",
     "createdAt": "2026-08-23T11:20:26.160Z",
-    "completedAt": null
+    "completedAt": "2026-08-25T11:51:02.055Z",
+    "resolution": "RE_ENGAGEMENT_CALL"
   },
   {
     "id": "task_auto_102",

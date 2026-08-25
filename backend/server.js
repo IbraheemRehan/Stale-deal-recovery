@@ -49,7 +49,30 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// 3. Mount Routes
+// 3. Settings API (stale threshold days)
+app.get('/api/settings', (req, res) => {
+  res.json({
+    success: true,
+    data: { staleDays: staleDetector.thresholdDays }
+  });
+});
+
+app.put('/api/settings', (req, res) => {
+  const { staleDays } = req.body;
+  const days = parseInt(staleDays, 10);
+  if (!days || days < 1 || days > 90) {
+    return res.status(400).json({ success: false, error: { message: 'staleDays must be between 1 and 90.' } });
+  }
+  staleDetector.thresholdDays = days;
+  console.log(`[Settings] Stale threshold updated to ${days} days.`);
+  res.json({
+    success: true,
+    message: `Stale threshold updated to ${days} days.`,
+    data: { staleDays: days }
+  });
+});
+
+// 4. Mount Routes
 app.use('/api', dealRoutes);
 app.use('/api', taskRoutes);
 app.use('/api', repRoutes);
