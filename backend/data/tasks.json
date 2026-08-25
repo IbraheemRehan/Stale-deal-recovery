@@ -1,0 +1,41 @@
+[
+  {
+    "id": "task_auto_101",
+    "dealId": "deal_101",
+    "dealTitle": "Enterprise CRM Migration & AI Add-on",
+    "dealAmount": 85000,
+    "company": "Apex Global Logistics",
+    "contactName": "Marcus Brody",
+    "contactEmail": "marcus.brody@apexlogistics.com",
+    "ownerId": "rep_101",
+    "ownerName": "Muhammad Ibraheem",
+    "ownerEmail": "ibrahimrhan285@gmail.com",
+    "title": "🚨 Re-engage Untouched Deal (9 Days Inactive)",
+    "description": "Deal has been sitting untouched for 9 days in PROPOSAL stage. Reach out with executive ROI comparison or pricing check-in.",
+    "priority": "HIGH",
+    "status": "PENDING",
+    "dueDate": "2026-08-26T11:20:26.160Z",
+    "createdAt": "2026-08-23T11:20:26.160Z",
+    "completedAt": null
+  },
+  {
+    "id": "task_auto_102",
+    "dealId": "deal_102",
+    "dealTitle": "Bio-Informatics Data Pipeline Platform",
+    "dealAmount": 140000,
+    "company": "Quantum BioLabs",
+    "contactName": "Dr. Evelyn Sterling",
+    "contactEmail": "evelyn.sterling@quantumbiolabs.com",
+    "ownerId": "rep_101",
+    "ownerName": "Muhammad Ibraheem",
+    "ownerEmail": "ibrahimrhan285@gmail.com",
+    "title": "🚨 Manager Escalation: High-Value Deal Stalled (11 Days)",
+    "description": "Untouched for 11 days in NEGOTIATION. Escalate to VP of Sales and schedule direct executive touchpoint.",
+    "priority": "URGENT",
+    "status": "COMPLETED",
+    "dueDate": "2026-08-25T11:20:26.160Z",
+    "createdAt": "2026-08-21T11:20:26.160Z",
+    "completedAt": "2026-08-25T11:40:25.921Z",
+    "resolution": "MANUAL_OUTREACH_EXECUTED"
+  }
+]

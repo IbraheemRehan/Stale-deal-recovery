@@ -1,0 +1,160 @@
+{
+  "name": "Stale Deal Recovery: Scheduled Scanner -> AI Re-engagement -> Slack & Gmail -> CRM Sync",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
+      },
+      "name": "1. Hourly Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -680,
+        100
+      ],
+      "id": "10111111-aaaa-4444-8888-111111111111"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://inexpert-attractively-kelly.ngrok-free.dev/api/webhooks/stale-scan",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "ngrok-skip-browser-warning",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "2. Trigger CRM 7-Day Stale Scan",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -460,
+        100
+      ],
+      "id": "20222222-bbbb-4444-8888-222222222222"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.data.flaggedCount }}",
+              "operation": "larger",
+              "value2": 0
+            }
+          ]
+        }
+      },
+      "name": "3. Any Stale Deals Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        100
+      ],
+      "id": "30333333-cccc-4444-8888-333333333333"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Generate AI Re-engagement and recovery playbooks for each flagged deal\nconst item = $input.first().json;\nconst flaggedDeals = item.data?.flaggedDeals || [];\n\nconst enriched = flaggedDeals.map(deal => {\n  const urgency = deal.amount >= 100000 ? 'EXECUTIVE_PRIORITY' : 'STANDARD_RE_ENGAGE';\n  return {\n    dealId: deal.id,\n    title: deal.title,\n    amount: deal.amount,\n    daysInactive: deal.daysInactive,\n    urgency: urgency,\n    aiPlaybook: `Re-activate prospect with executive value proposition, updated ROI audit, or Q3 promotion incentive.`,\n    slackMessage: `🚨 *STALE DEAL DETECTED (≥ 7 Days Untouched)*\\n• *Deal:* ${deal.title}\\n• *Value:* $${deal.amount.toLocaleString()}\\n• *Inactivity:* ${deal.daysInactive} days\\n• *Action:* Auto-generated follow-up task dispatched to owner.`\n  };\n});\n\nreturn enriched.length > 0 ? enriched.map(e => ({ json: e })) : [{ json: { noDeals: true } }];"
+      },
+      "name": "4. AI Re-engagement Playbook Drafter",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        20
+      ],
+      "id": "40444444-dddd-4444-8888-444444444444"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0BS8S8UECA",
+          "mode": "list",
+          "cachedResultName": "stale-deals-recovery"
+        },
+        "text": "={{ $json.slackMessage }}",
+        "otherOptions": {}
+      },
+      "name": "5. Post Alert to Slack Channel",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [
+        200,
+        20
+      ],
+      "id": "50555555-eeee-4444-8888-505555555555"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "1. Hourly Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "2. Trigger CRM 7-Day Stale Scan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2. Trigger CRM 7-Day Stale Scan": {
+      "main": [
+        [
+          {
+            "node": "3. Any Stale Deals Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "3. Any Stale Deals Found?": {
+      "main": [
+        [
+          {
+            "node": "4. AI Re-engagement Playbook Drafter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4. AI Re-engagement Playbook Drafter": {
+      "main": [
+        [
+          {
+            "node": "5. Post Alert to Slack Channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
