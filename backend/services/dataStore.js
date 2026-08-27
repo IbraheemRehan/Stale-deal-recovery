@@ -21,12 +21,12 @@ if (!fs.existsSync(DATA_DIR)) {
 const DEFAULT_REPS = [
   {
     id: 'rep_101',
-    name: 'Muhammad Ibraheem',
-    email: process.env.GMAIL_USER || 'ibrahimrhan285@gmail.com',
+    name: 'Marcus Vance',
+    email: process.env.GMAIL_USER || 'marcus.vance@enterprise-crm.io',
     role: 'Senior Account Executive',
     phone: '+1 (555) 201-9988',
     active: true,
-    avatar: 'MI'
+    avatar: 'MV'
   },
   {
     id: 'rep_102',

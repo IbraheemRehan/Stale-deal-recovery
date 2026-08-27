@@ -105,7 +105,7 @@ graph TD
 - **Sales Team Workload & Roster**: Representative workload monitoring, at-risk value indicators, recovery win-rate progress bars, and full CRUD modal.
 
 ### 3. 🚨 Automated Multi-Channel Alerting
-- Real-time HTML email dispatch from `GMAIL_USER` (`ibrahimrhan285@gmail.com`) to the deal owner.
+- Real-time HTML email dispatch from `GMAIL_USER` to the deal owner.
 - Slack channel alerts to `#stale-deals-recovery` with deal value and days untouched.
 - Manager escalation workflow alerting the VP of Sales when critical enterprise deals stall.
 
@@ -162,7 +162,7 @@ To connect **n8n Cloud** to your local backend server:
    ```bash
    ngrok http 5070
    ```
-2. Copy your forwarding URL (e.g. `https://inexpert-attractively-kelly.ngrok-free.dev`).
+2. Copy your forwarding URL (e.g. `https://your-ngrok-tunnel.ngrok-free.dev`).
 3. Import [`stale_deal_recovery_n8n_workflow.json`](./n8n/stale_deal_recovery_n8n_workflow.json) into n8n.
 4. Set Node 2 (HTTP Request) URL to:
    ```text

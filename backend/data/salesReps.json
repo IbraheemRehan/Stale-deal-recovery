@@ -1,11 +1,29 @@
 [
   {
     "id": "rep_101",
-    "name": "Muhammad Ibraheem",
-    "email": "ibrahimrhan285@gmail.com",
+    "name": "Marcus Vance",
+    "email": "marcus.vance@enterprise-crm.io",
     "role": "Senior Account Executive",
     "phone": "+1 (555) 201-9988",
     "active": true,
-    "avatar": "MI"
+    "avatar": "MV"
+  },
+  {
+    "id": "rep_102",
+    "name": "Elena Rostova",
+    "email": "elena.rostova@enterprise-crm.io",
+    "role": "Enterprise Deal Closer",
+    "phone": "+1 (555) 302-8877",
+    "active": true,
+    "avatar": "ER"
+  },
+  {
+    "id": "rep_103",
+    "name": "David Kim",
+    "email": "david.kim@enterprise-crm.io",
+    "role": "Commercial AE",
+    "phone": "+1 (555) 403-7766",
+    "active": true,
+    "avatar": "DK"
   }
 ]

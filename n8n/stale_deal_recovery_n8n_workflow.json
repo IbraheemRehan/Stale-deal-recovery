@@ -24,7 +24,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://inexpert-attractively-kelly.ngrok-free.dev/api/webhooks/stale-scan",
+        "url": "https://YOUR-NGROK-DOMAIN.ngrok-free.dev/api/webhooks/stale-scan",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
